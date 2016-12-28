@@ -3,12 +3,5 @@ eureka:
      leaseRenewalIntervalInSeconds: 5   # DO NOT DO THIS IN PRODUCTION
   client:
     serviceUrl:
-      defaultZone: http://localhost:1111/eureka/
+      defaultZone: http://eureka.arkhotech.space:1111/eureka/
       
-spring:
-  cloud:
-     config:
-       server:
-         git:
-           uri: https://github.com/spring-cloud-samples/config-repo
-           basedir: target/config

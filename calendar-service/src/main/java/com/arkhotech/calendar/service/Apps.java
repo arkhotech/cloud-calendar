@@ -5,6 +5,25 @@ public class Apps {
 	
 	private String contact_email;
 	
+	public Apps(){
+		
+	}
+	
+	public Apps(String appkey, String contact_email, String domain, String from_email, String from_name,
+			String html_cancel_email, String html_confirmation_email, String html_modify_email, String name,
+			String status) {
+		super();
+		this.appkey = appkey;
+		this.contact_email = contact_email;
+		this.domain = domain;
+		this.from_email = from_email;
+		this.from_name = from_name;
+		this.html_cancel_email = html_cancel_email;
+		this.html_confirmation_email = html_confirmation_email;
+		this.html_modify_email = html_modify_email;
+		this.name = name;
+		this.status = status;
+	}
 	private String domain;
 	
 	private String from_email;
@@ -73,5 +92,9 @@ public class Apps {
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	public String toString(){
+		return this.appkey +" " + this.domain;
 	}
 }

@@ -2,16 +2,6 @@ package com.arkhotech.calendar.service;
 
 public class Response {
 	
-	public Object response;
-	
-	public Object getResponse() {
-		return response;
-	}
-
-	public void setResponse(Object response) {
-		this.response = response;
-	}
-
 	public int code;
 	
 	public String message;
