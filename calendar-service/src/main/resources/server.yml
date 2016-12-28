@@ -1,6 +1,6 @@
 eureka:
   instance:
-     leaseRenewalIntervalInSeconds: 5   # DO NOT DO THIS IN PRODUCTION
+    leaseRenewalIntervalInSeconds: 5   # DO NOT DO THIS IN PRODUCTION
   client:
     serviceUrl:
       defaultZone: http://eureka.arkhotech.space:1111/eureka/
