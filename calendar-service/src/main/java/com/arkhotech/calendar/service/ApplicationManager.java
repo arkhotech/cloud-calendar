@@ -1,17 +1,17 @@
 package com.arkhotech.calendar.service;
 
 
-import javax.ws.rs.HeaderParam;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Configuration
 @RestController
@@ -28,7 +28,10 @@ public class ApplicationManager {
 	}
 	
 	@RequestMapping(value="/app",method=RequestMethod.GET)
-	public Applications listApplications(@HeaderParam(value = "appkey") String appkey ){  //localhost:1111
+	public Applications listApplications(
+			@RequestParam("appkey") String appkey,
+			@RequestParam("domain")String domain ){  
+		
 		log.debug("Recibiendo Consulta");
 		log.debug("appkey:" +appkey );
 		Applications result = new Applications();
@@ -52,8 +55,8 @@ public class ApplicationManager {
 		return result;
 	}
 	
-	@RequestMapping(value="/app/{appkey}",method=RequestMethod.POST)
-	public Applications addApplications(Apps application,@PathVariable(value="appkey") String appkey){  //localhost:1111
+	@RequestMapping(value="/app",method=RequestMethod.POST)
+	public Applications addApplications(Apps application,@RequestParam("appkey") String appkey){  //localhost:1111
 		log.info("POST nueva aplicación");
 		log.info(application.toString());
 		Applications result = new Applications();
@@ -64,4 +67,21 @@ public class ApplicationManager {
 		result.getResponse().setMessage("OK");
 		return result;
 	}
+	
+	@RequestMapping(value="/app",method=RequestMethod.PUT)
+	public Response updateApplication(@RequestHeader("appkey")String appkey,@RequestHeader("domain")String domain){
+		log.info("appkey: " + appkey);
+		log.info("domain: " + domain);
+		return new Response(1,"No habiltado");
+	}
+	
+	@RequestMapping(value="/app/changeStatus",method=RequestMethod.PUT)
+	public Response changeApplicationStatus(@RequestHeader("appkey")String appkey,
+						@RequestHeader("domain")String domain){
+		log.info("appkey: " + appkey);
+		log.info("domain: " + domain);
+		throw new NoDataFound();
+		//return new Response(1,"No habiltado");
+	}
+	
 }
