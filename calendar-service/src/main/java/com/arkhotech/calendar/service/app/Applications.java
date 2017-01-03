@@ -1,8 +1,16 @@
-package com.arkhotech.calendar.service;
+package com.arkhotech.calendar.service.app;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.arkhotech.calendar.service.app.dao.Apps;
+
+/**
+ * Modelo de respuesta del servicio Application
+ * 
+ * @author msilva
+ *
+ */
 public class Applications {
 	
 	private Response response;

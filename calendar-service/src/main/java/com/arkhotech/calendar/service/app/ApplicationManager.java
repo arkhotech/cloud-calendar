@@ -1,5 +1,7 @@
-package com.arkhotech.calendar.service;
+package com.arkhotech.calendar.service.app;
 
+
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.arkhotech.calendar.service.app.dao.ApplicationData;
+import com.arkhotech.calendar.service.app.dao.Apps;
+import com.arkhotech.calendar.service.error.NoDataFoundException;
+
 import org.springframework.web.bind.annotation.RequestHeader;
 
 @Configuration
@@ -19,7 +26,8 @@ public class ApplicationManager {
 	private static final Logger log = LoggerFactory.getLogger(ApplicationManager.class);
 	
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private ApplicationData data;
+	
 
 	@RequestMapping("/info")
 	public String getInfo(){
@@ -34,20 +42,8 @@ public class ApplicationManager {
 		log.debug("Recibiendo Consulta");
 		log.debug("appkey:" +appkey );
 		Applications result = new Applications();
-		jdbcTemplate.query(
-                "SELECT * FROM apps",
-                (rs, rowNum) -> new Apps(
-                		rs.getString("appkey"),
-                		rs.getString("contact_email"),
-                		rs.getString("domain"),
-                		rs.getString("from_email"),
-                		rs.getString("from_name"),
-                		rs.getString("html_cancel_email"),
-                		rs.getString("html_confirmation_email"),
-                		rs.getString("html_modify_email"),
-                		rs.getString("name"),
-                		rs.getString("status"))).forEach(apps -> result.getApps().add(apps));
-		
+		List<Apps> apps = data.listarApps(appkey);
+		result.setApps(apps);
 		result.setResponse(new Response());
 		result.getResponse().setCode(0);
 		result.getResponse().setMessage("OK");
@@ -59,8 +55,7 @@ public class ApplicationManager {
 		log.info("POST nueva aplicación");
 		log.info(application.toString());
 		Applications result = new Applications();
-	
-		
+		data.addApplications(application,null);		
 		result.setResponse(new Response());
 		result.getResponse().setCode(0);
 		result.getResponse().setMessage("OK");
@@ -79,8 +74,7 @@ public class ApplicationManager {
 						@RequestHeader("domain")String domain){
 		log.info("appkey: " + appkey);
 		log.info("domain: " + domain);
-		throw new NoDataFound();
-		//return new Response(1,"No habiltado");
+		throw new NoDataFoundException(500,"No se encontraron datos");
 	}
 	
 }

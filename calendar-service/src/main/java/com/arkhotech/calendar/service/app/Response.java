@@ -1,4 +1,4 @@
-package com.arkhotech.calendar.service;
+package com.arkhotech.calendar.service.app;
 
 public class Response {
 	
