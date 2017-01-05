@@ -2,6 +2,8 @@ package com.arkhotech.calendar.service.app;
 
 public class Response {
 	
+	public static int OK = 0;
+	
 	public int code;
 	
 	public String message;

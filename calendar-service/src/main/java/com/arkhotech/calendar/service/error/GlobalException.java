@@ -1,6 +1,6 @@
 package com.arkhotech.calendar.service.error;
 
-public abstract class GlobalException   extends RuntimeException{
+public abstract class GlobalException   extends Exception{
 	
 	/**
 	 * 

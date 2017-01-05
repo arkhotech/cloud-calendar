@@ -6,16 +6,20 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import com.arkhotech.calendar.service.error.AppkeyNoFoundException;
 import com.arkhotech.calendar.service.error.NoDataFoundException;
 
 
 @Configuration
 @Component
+@CacheConfig(cacheNames="apps")
+@CacheEvict(cacheNames="apps", allEntries=true)
 public class ApplicationDAO implements ApplicationData{
 
 	private static final Logger log = LoggerFactory.getLogger(ApplicationDAO.class);
@@ -24,6 +28,7 @@ public class ApplicationDAO implements ApplicationData{
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
+	@Cacheable
 	public List<Apps> listarApps(String appkey) throws NoDataFoundException {
 		List<Apps> result = new ArrayList<Apps>();
 		log.info("Ejecutando implementaciónde DAO");
@@ -48,12 +53,46 @@ public class ApplicationDAO implements ApplicationData{
 	}
 
 	@Override
-	public void addApplications(Apps app, String appkey) {
-		if(app == null || appkey == null){
-			throw new AppkeyNoFoundException(3,"No se ha especificado el appkey");
-		}
-			
+	public void addApplications(Apps app) {
 		
+		
+		jdbcTemplate.update("insert into apps (" +
+				"appkey,contact_email,domain,from_email" +
+		  		"from_name,html_cancel_email,html_confirmation_email"+
+		  		"html_modify_email,name,status");
+		
+//		rs.setString("appkey",createAppkey()),
+//  		rs.setString("contact_email"),
+//  		rs.setString("domain"),
+//  		rs.setString("from_email"),
+//  		rs.setString("from_name"),
+//  		rs.setString("html_cancel_email"),
+//  		rs.setString("html_confirmation_email"),
+//  		rs.setString("html_modify_email"),
+//  		rs.setString("name"),
+//  		rs.setString("status"))).forEach(apps -> result.add(apps));
 	}
 	
+	private String createAppkey(){
+		return "2F";
+	}
+
+
+	@Override
+	public void addNewDomain(String appkey, Apps apps) throws NoDataFoundException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateApplication(String appkey, String domain, Apps application) throws NoDataFoundException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disableApplication(String appkey, String domain) throws NoDataFoundException {
+		// TODO Auto-generated method stub
+		
+	}
 }

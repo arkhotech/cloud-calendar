@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.arkhotech.calendar.service.app.dao.ApplicationData;
 import com.arkhotech.calendar.service.app.dao.Apps;
 import com.arkhotech.calendar.service.error.NoDataFoundException;
-
-import org.springframework.web.bind.annotation.RequestHeader;
 
 @Configuration
 @RestController
@@ -37,7 +35,7 @@ public class ApplicationManager {
 	@RequestMapping(value="/app",method=RequestMethod.GET)
 	public Applications listApplications(
 			@RequestParam("appkey") String appkey,
-			@RequestParam("domain")String domain ){  
+			@RequestParam("domain")String domain ) throws NoDataFoundException {  
 		
 		log.debug("Recibiendo Consulta");
 		log.debug("appkey:" +appkey );
@@ -51,30 +49,44 @@ public class ApplicationManager {
 	}
 	
 	@RequestMapping(value="/app",method=RequestMethod.POST)
-	public Applications addApplications(Apps application,@RequestParam("appkey") String appkey){  //localhost:1111
+	public Response addApplications(Apps application,@RequestParam("appkey") String appkey) throws NoDataFoundException{  //localhost:1111
 		log.info("POST nueva aplicación");
 		log.info(application.toString());
-		Applications result = new Applications();
-		data.addApplications(application,null);		
-		result.setResponse(new Response());
-		result.getResponse().setCode(0);
-		result.getResponse().setMessage("OK");
-		return result;
+		
+		if( appkey != null ){
+			data.addNewDomain(appkey,application);
+		}else{
+			data.addApplications(application);
+		}
+		return createOKResponse();
 	}
 	
 	@RequestMapping(value="/app",method=RequestMethod.PUT)
-	public Response updateApplication(@RequestHeader("appkey")String appkey,@RequestHeader("domain")String domain){
+	public Response updateApplication(Apps application,
+									  @RequestHeader("appkey")String appkey,
+									  @RequestHeader("domain")String domain
+									  ) throws NoDataFoundException{
 		log.info("appkey: " + appkey);
 		log.info("domain: " + domain);
-		return new Response(1,"No habiltado");
+		data.updateApplication(appkey,domain,application);
+		//si hay error no llegará a este punto
+		return createOKResponse();
 	}
 	
 	@RequestMapping(value="/app/changeStatus",method=RequestMethod.PUT)
 	public Response changeApplicationStatus(@RequestHeader("appkey")String appkey,
-						@RequestHeader("domain")String domain){
+						@RequestHeader("domain")String domain) throws NoDataFoundException{
 		log.info("appkey: " + appkey);
 		log.info("domain: " + domain);
-		throw new NoDataFoundException(500,"No se encontraron datos");
+		data.disableApplication(appkey,domain);
+		return createOKResponse();
+	}
+	
+	private Response createOKResponse(){
+		Response response = new Response();
+		response.setCode(Response.OK);
+		response.setMessage("OK");
+		return response;
 	}
 	
 }
